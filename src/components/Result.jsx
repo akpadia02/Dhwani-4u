@@ -1,15 +1,24 @@
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { Smile, User, Mic, Target, AudioLines } from "lucide-react";
+import { Smile, User, Mic, Target, AudioLines,Calendar1 } from "lucide-react";
+import { detectIntentFromText } from "./gemini";
 
 const AudioAnalysisResult = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { fileName, prediction } = location.state || {};
 
+  // useEffect(() => {
+  //   if (!fileName || !prediction) navigate("/");
+  // }, [fileName, prediction, navigate]);
+
   useEffect(() => {
-    if (!fileName || !prediction) navigate("/");
+    if (!fileName || !prediction) {
+      navigate("/");
+    } else if (!prediction.intent) {
+      prediction.intent = "Unknown"; // fallback
+    }
   }, [fileName, prediction, navigate]);
 
   const numCircles = 6;
@@ -65,7 +74,7 @@ const AudioAnalysisResult = () => {
                 <p className="font-semibold">{prediction.intent || "N/A"}</p>
               </div>
               <div className="flex flex-col items-center">
-                <Mic className="text-blue-400 mb-1" size={28} />
+                <Calendar1 className="text-blue-400 mb-1" size={28} />
                 <p className="text-sm text-gray-300">Age</p>
                 <p className="font-semibold">{prediction.age}</p>
               </div>
